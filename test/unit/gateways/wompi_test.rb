@@ -64,15 +64,6 @@ class WompiTest < Test::Unit::TestCase
     assert response.test?
   end
 
-  def test_failed_authorize
-    @gateway.expects(:ssl_post).returns(failed_authorize_response)
-
-    response = @gateway.authorize(@amount, @credit_card, @options)
-    assert_failure response
-
-    assert_equal 'will be cool when i figure this out', response.message
-  end
-
   def test_successful_capture
     @gateway.expects(:ssl_post).returns(successful_capture_response)
 
@@ -85,10 +76,9 @@ class WompiTest < Test::Unit::TestCase
   def test_failed_capture
     @gateway.expects(:ssl_post).returns(failed_capture_response)
 
-    response = @gateway.capture(@amount, '113879-1638483506-80282', @options)
+    response = @gateway.capture(@amount, @credit_card, @options)
     assert_failure response
-    message = JSON.parse(response.message)
-    assert_equal 'payment_source_id Debe ser tipo integer', message['payment_source_id'].first
+    assert_equal 'La transacción fue rechazada (Sandbox)', response.message
   end
 
   def test_successful_refund
@@ -165,12 +155,6 @@ class WompiTest < Test::Unit::TestCase
     )
   end
 
-  def failed_authorize_response
-    %(
-      {will be cool when i figure this out}
-    )
-  end
-
   def successful_capture_response
     %(
       {"data":{"id":"113879-1638483506-80282","created_at":"2021-12-02T22:18:27.877Z","amount_in_cents":160000,"reference":"larenciadediana3","currency":"COP","payment_method_type":"CARD","payment_method":{"type":"CARD","extra":{"name":"VISA-4242","brand":"VISA","last_four":"4242","external_identifier":"N4Dup17YZn"}},"redirect_url":null,"status":"APPROVED","status_message":null,"merchant":{"name":"Spreedly MV","legal_name":"Miguel Valencia","contact_name":"Miguel Valencia","phone_number":"+573117654567","logo_url":null,"legal_id_type":"CC","email":"mvalencia@spreedly.com","legal_id":"14671275"},"taxes":[]}}
@@ -179,7 +163,7 @@ class WompiTest < Test::Unit::TestCase
 
   def failed_capture_response
     %(
-      {"error":{"type":"INPUT_VALIDATION_ERROR","messages":{"payment_source_id":["payment_source_id Debe ser tipo integer"]}}}
+      {"data":{"id":"113879-1638802203-50693","created_at":"2021-12-06T14:50:04.497Z","amount_in_cents":160000,"reference":"larencia987diana37","currency":"COP","payment_method_type":"CARD","payment_method":{"type":"CARD","extra":{"name":"VISA-1111","brand":"VISA","last_four":"1111","external_identifier":"1cAREQ60RX"}},"redirect_url":null,"status":"DECLINED","status_message":"La transacción fue rechazada (Sandbox)","merchant":{"name":"Spreedly MV","legal_name":"Miguel Valencia","contact_name":"Miguel Valencia","phone_number":"+573117654567","logo_url":null,"legal_id_type":"CC","email":"mvalencia@spreedly.com","legal_id":"14671275"},"taxes":[]}}
     )
   end
 

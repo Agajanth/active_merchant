@@ -59,24 +59,11 @@ class RemoteWompiTest < Test::Unit::TestCase
     assert_success void
   end
 
-  def test_partial_capture #is this a thing?
-    response = @gateway.authorize(@amount, @credit_card, @options)
-    assert_success response
-
-    assert capture = @gateway.capture(@amount - 1, response.authorization)
-    assert_success capture
-  end
-
-  def test_failed_authorize
+  def test_failed_capture
     response = @gateway.authorize(@amount, @declined_card, @options)
-    assert_failure response
-  end
-
-  def test_failed_capture #failing because of Validation error, so this may not be a :good_fail: ?
-    response = @gateway.authorize(@amount, @credit_card, @options)
     assert_success response
 
-    assert capture = @gateway.capture(nil, '')
+    assert capture = @gateway.capture(@amount, response.authorization)
     assert_failure capture
   end
 
