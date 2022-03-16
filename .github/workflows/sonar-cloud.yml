@@ -1,6 +1,7 @@
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
   # re run
+  # Small change
   push:
     branches:
       - master
@@ -34,7 +35,7 @@ jobs:
       if: always()
       run: |
         bundle exec rake test:units
-    - name: Unit test
+    - name: Saludo desde github
       if: always()
       run: |
         echo "Hola desde github actions"
