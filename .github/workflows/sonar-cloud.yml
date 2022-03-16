@@ -34,6 +34,10 @@ jobs:
       if: always()
       run: |
         bundle exec rake test:units
+    - name: Unit test
+      if: always()
+      run: |
+        echo "Hola desde github actions"
     - name: Upload reports
       if: success()
       uses: actions/upload-artifact@v2
